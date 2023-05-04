@@ -7,6 +7,7 @@ import com.acme.category.repo.CategoryRepository;
 import com.acme.category.model.Category;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -23,12 +24,19 @@ public class CategoryManagerImpl implements CategoryManager {
 
 	public Category getCategory(int id) {
 		Optional<Category> category =  helper.findById((long)id);
-        return category.orElse(null);
+		if (category.isPresent()) {
+			return category.get();
+		} else {
+			throw new NoSuchElementException("Category with ID " + id + " not found");
+		}
 	}
 
 	public Category getCategoryByName(String name) {
-        // TODO: Impl
-		return null;
+		Iterable<Category> it = helper.findAll();
+		for (Category category : it) {
+			if (category.getName().equals(name)) return category;
+		}
+		throw new NoSuchElementException("Category with name " + name + " not found");
 	}
 
 	public void addCategory(String name) {
