@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.sql.SQLTimeoutException;
+import java.util.NoSuchElementException;
 
 
 @RestController
@@ -21,21 +25,25 @@ public class CategoryRestController {
         this.service = service;
     }
 
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SQLTimeoutException.class)
+    public ResponseEntity<String> handleSQLTimeoutException(SQLTimeoutException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
     @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.GET)
     public ResponseEntity<Category> getCategory(@PathVariable int categoryId) {
-        try {
-            Category category = service.getCategory(categoryId);
-            return new ResponseEntity<>(category, HttpStatus.OK);
-        } catch (Exception e) {
-            // TODO: Fall Kategorie nicht gefunden wird
-            // TODO: Datenbank nicht erreichbar
-        }
-        return null;
+        Category category = service.getCategory(categoryId);
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity<Iterable<Category>> getCategories() {
-        // Kein Filterparameter für categories
+        // TODO: Methode hat eigentlich ein List<Category> zurück gegeben (ggf in impl des webshop anpassen
         // TODO: Filterparameter im Produkt Microservice müssen noch untersuchen und behandelt werden
         Iterable<Category> allCategories = service.getCategories();
         return new ResponseEntity<>(allCategories, HttpStatus.OK);
