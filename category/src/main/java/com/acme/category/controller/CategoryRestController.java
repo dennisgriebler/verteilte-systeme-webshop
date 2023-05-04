@@ -2,6 +2,8 @@ package com.acme.category.controller;
 
 
 import com.acme.category.buisnesslogic.impl.CategoryManagerImpl;
+import com.acme.category.exception.CategoryExistsException;
+import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.model.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,17 +44,18 @@ public class CategoryRestController {
     }
 
     @PostMapping(value = "/categories")
-    public ResponseEntity<?> addCategory() {
-        // TODO: Request Body auslesen
-        // TODO: ggf. Fehlerbehandlung wenn Inputdaten unzureichend sind?
-        // TODO: Fall Kategorie existiert schon => Exception: CategoryExistsException mit Nachricht: Kategorie schon vorhanden
-        // service.toString();
+    public ResponseEntity<?> addCategory(@RequestParam String name) {
+        // TODO: Input als Pfad Param oder im Body?
+        // TODO: Links bauen
+        // Category category = null;
         try {
-
-        } catch(Exception e) {
-
+            if (name == null || name.length() == 0) throw new InvalidCategoryNameException("Eine Angabe zum Namen der Kategorie ist erforderlich");
+            service.addCategory(name);
+        } catch (InvalidCategoryNameException | CategoryExistsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
         }
-        return null;
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
+
     }
 
     @DeleteMapping(value = "/categories/{categoryId}")
