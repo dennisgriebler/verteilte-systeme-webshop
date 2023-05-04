@@ -43,6 +43,7 @@ public class CategoryManagerImpl implements CategoryManager {
 	}
 
 	public void delCategoryById(int id) {
-		helper.deleteById((long) id);
+		// TODO: Interkation mit Product Microservice
+        helper.deleteById((long) id);
 	}
 }

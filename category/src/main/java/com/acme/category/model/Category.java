@@ -15,9 +15,6 @@ public class Category {
 
     //@Column(name="NAME")
     private String name;
-    // TODO: Products One-to-Many
-    //private Set<Integer> products;
-
 
     public Category() { }
 
