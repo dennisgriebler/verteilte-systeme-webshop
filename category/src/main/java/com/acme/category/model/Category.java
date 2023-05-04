@@ -57,7 +57,7 @@ public class Category {
     }
 
     public String toString() {
-        return "Category {" + "name=" + this.name;
+        return "Category {" + "name=" + this.name + "}";
     }
 
 }
