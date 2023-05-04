@@ -5,10 +5,7 @@ import com.acme.category.buisnesslogic.impl.CategoryManagerImpl;
 import com.acme.category.model.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -17,11 +14,14 @@ public class CategoryRestController {
     private CategoryManagerImpl service;
 
     // Kommunikation: Shared Kernel oder Consumer/Supplier
+    // TODO: GET => Pia
+    // TODO: POST => Dennis
+    // TODO: DELETE => Matthias
     public CategoryRestController (CategoryManagerImpl service) {
         this.service = service;
     }
 
-    @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.GET)
+    @GetMapping(value = "/categories/{categoryId}")
     public ResponseEntity<Category> getCategory(@PathVariable int categoryId) {
         try {
             Category category = service.getCategory(categoryId);
@@ -33,7 +33,7 @@ public class CategoryRestController {
         return null;
     }
 
-    @RequestMapping(value = "/categories", method = RequestMethod.GET)
+    @GetMapping(value = "/categories")
     public ResponseEntity<Iterable<Category>> getCategories() {
         // Kein Filterparameter für categories
         // TODO: Filterparameter im Produkt Microservice müssen noch untersuchen und behandelt werden
@@ -41,7 +41,7 @@ public class CategoryRestController {
         return new ResponseEntity<>(allCategories, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/categories", method = RequestMethod.POST)
+    @PostMapping(value = "/categories")
     public ResponseEntity<?> addCategory() {
         // TODO: Request Body auslesen
         // TODO: ggf. Fehlerbehandlung wenn Inputdaten unzureichend sind?
@@ -55,7 +55,7 @@ public class CategoryRestController {
         return null;
     }
 
-    @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/categories/{categoryId}")
     public ResponseEntity<Category> deleteCategory(@PathVariable Long categoryId) {
         // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
         // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
