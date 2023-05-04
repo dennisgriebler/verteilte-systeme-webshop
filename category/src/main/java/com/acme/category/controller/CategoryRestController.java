@@ -38,6 +38,11 @@ public class CategoryRestController {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    @ExceptionHandler({InvalidCategoryNameException.class, CategoryExistsException.class})
+    public ResponseEntity<String> handleCategoryAddExceptions(Exception e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
+    }
+
     @GetMapping(value = "/categories/{categoryId}")
     public ResponseEntity<Category> getCategory(@PathVariable int categoryId) {
         Category category = service.getCategory(categoryId);
@@ -57,12 +62,7 @@ public class CategoryRestController {
         // TODO: Input als Pfad Param oder im Body?
         // TODO: Links bauen
         // Category category = null;
-        try {
-            if (name == null || name.length() == 0) throw new InvalidCategoryNameException("Eine Angabe zum Namen der Kategorie ist erforderlich");
-            service.addCategory(name);
-        } catch (InvalidCategoryNameException | CategoryExistsException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
-        }
+        service.addCategory(name);
         return new ResponseEntity<>(null, HttpStatus.CREATED);
 
     }

@@ -4,6 +4,7 @@ package com.acme.category.buisnesslogic.impl;
 
 import com.acme.category.buisnesslogic.CategoryManager;
 import com.acme.category.exception.CategoryExistsException;
+import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.repo.CategoryRepository;
 import com.acme.category.model.Category;
 import org.slf4j.Logger;
@@ -36,26 +37,37 @@ public class CategoryManagerImpl implements CategoryManager {
 		}
 	}
 
-	public Category getCategoryByName(String name) {
-<<<<<<< HEAD
-		Iterable<Category> it = helper.findAll();
-		for (Category category : it) {
-			if (category.getName().equals(name)) return category;
-		}
-		throw new NoSuchElementException("Category with name " + name + " not found");
-=======
-        return helper.getCategoryByName(name);
->>>>>>> b6835aea0325916640e7189bd5a2b249ebccff8a
-	}
+	public Category getCategoryByName(String name) throws NoSuchElementException {
+		//Iterable<Category> it = helper.findAll();
+		//for (Category category : it) {
+		//	if (category.getName().equals(name)) return category;
+		//}
+        Category category = helper.getCategoryByName(name);
+        if (category == null) throw new NoSuchElementException("Category with name " + name + " not found");
+        return category;
+    }
+
+    public boolean existsCategoryByName(String name) {
+        try {
+            getCategoryByName(name);
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+        return true;
+    }
 
 	public void addCategory(String name) throws CategoryExistsException {
         log.info("Categorie name: " + name);
-        Category category = getCategoryByName(name);
-        log.info("Categorie found: " + category);
 
-        if (category != null) throw new CategoryExistsException(category.getName());
+        if (name == null || name.length() == 0)
+            throw new InvalidCategoryNameException("A name the the category is required.");
 
-        category = new Category(name);
+        if (existsCategoryByName(name)) {
+            log.info("Categorie found: " + name);
+            throw new CategoryExistsException(name);
+        }
+
+        Category category = new Category(name);
         helper.save(category);
 	}
 
