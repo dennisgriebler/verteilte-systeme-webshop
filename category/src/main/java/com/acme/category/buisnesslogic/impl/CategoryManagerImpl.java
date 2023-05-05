@@ -49,10 +49,13 @@ public class CategoryManagerImpl implements CategoryManager {
 
     public boolean existsCategoryByName(String name) {
         try { getCategoryByName(name); }
-        catch (NoSuchElementException e) { return false; }
+        catch (CategoryNotFoundException e) { return false; }
         return true;
     }
 
+    public Category addCategory(Category category) throws CategoryExistsException {
+        return addCategory(category == null ? null : category.getName());
+    }
 	public Category addCategory(String name) throws CategoryExistsException {
         log.info("Categorie name: " + name);
 

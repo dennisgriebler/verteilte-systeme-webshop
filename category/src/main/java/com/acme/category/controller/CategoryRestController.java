@@ -8,13 +8,27 @@ import com.acme.category.exception.DatabaseNotAvailableException;
 import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.model.Category;
 import com.acme.category.model.CategoryModelAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @RestController
 public class CategoryRestController {
+
+    private static final Logger log = LoggerFactory.getLogger(CategoryRestController.class);
+
 
     private CategoryManagerImpl service;
 
@@ -28,7 +42,6 @@ public class CategoryRestController {
         this.service = service;
         this.assembler = assembler;
     }
-
 
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<String> handleCategoryNotFoundException(CategoryNotFoundException e) {
@@ -46,26 +59,38 @@ public class CategoryRestController {
     }
 
     @GetMapping(value = "/categories/{categoryId}")
-    public ResponseEntity<Category> getCategory(@PathVariable int categoryId) {
+    public ResponseEntity<?> getCategory(@PathVariable int categoryId) {
         Category category = service.getCategory(categoryId);
-        return new ResponseEntity<>(category, HttpStatus.OK);
+        return new ResponseEntity<>(assembler.toModel(category), HttpStatus.OK);
     }
 
     @GetMapping(value = "/categories")
-    public ResponseEntity<Iterable<Category>> getCategories() {
+    public ResponseEntity<Iterable<?>> getCategories() {
         // TODO: Methode hat eigentlich ein List<Category> zurück gegeben (ggf in impl des webshop anpassen
         // TODO: Filterparameter im Produkt Microservice müssen noch untersuchen und behandelt werden
-        Iterable<Category> allCategories = service.getCategories();
-        return new ResponseEntity<>(allCategories, HttpStatus.OK);
+        //Iterable<Category> allCategories = service.getCategories() ;
+        List<EntityModel<Category>> allCategories = StreamSupport.stream(service.getCategories().spliterator(), false)
+                .map(assembler::toModel)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(
+                CollectionModel.of(allCategories, linkTo(methodOn(CategoryRestController.class).getCategories()).withSelfRel())
+                , HttpStatus.OK);
     }
 
     @PostMapping(value = "/categories")
+    public ResponseEntity<?> addCategory(@RequestBody Category categoryForm) {
+        Category category = service.addCategory(categoryForm);
+        return new ResponseEntity<>(assembler.toModel(category), HttpStatus.CREATED);
+    }
+
+    /*
+    @PostMapping(value = "/categories")
     public ResponseEntity<?> addCategory(@RequestParam String name) {
-        // TODO: Input als Pfad Param oder im Body?
         Category category = service.addCategory(name);
         return new ResponseEntity<>(assembler.toModel(category), HttpStatus.CREATED);
-
     }
+    */
 
     @DeleteMapping(value = "/categories/{categoryId}")
     public ResponseEntity<Category> deleteCategory(@PathVariable Long categoryId) {
