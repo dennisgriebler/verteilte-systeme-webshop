@@ -10,7 +10,7 @@ public interface CategoryManager {
 	
 	public Category getCategoryByName(String name);
 	
-	public void addCategory(String name);
+	public Category addCategory(String name);
 	
 	public void delCategory(Category cat);
 	

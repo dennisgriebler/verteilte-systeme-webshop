@@ -48,19 +48,16 @@ public class CategoryManagerImpl implements CategoryManager {
     }
 
     public boolean existsCategoryByName(String name) {
-        try {
-            getCategoryByName(name);
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        try { getCategoryByName(name); }
+        catch (NoSuchElementException e) { return false; }
         return true;
     }
 
-	public void addCategory(String name) throws CategoryExistsException {
+	public Category addCategory(String name) throws CategoryExistsException {
         log.info("Categorie name: " + name);
 
         if (name == null || name.length() == 0)
-            throw new InvalidCategoryNameException("A name the the category is required.");
+            throw new InvalidCategoryNameException("A name is required for a new category.");
 
         if (existsCategoryByName(name)) {
             log.info("Categorie found: " + name);
@@ -68,7 +65,7 @@ public class CategoryManagerImpl implements CategoryManager {
         }
 
         Category category = new Category(name);
-        helper.save(category);
+        return helper.save(category);
 	}
 
 	public void delCategory(Category cat) {

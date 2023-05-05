@@ -5,6 +5,8 @@ import com.acme.category.buisnesslogic.impl.CategoryManagerImpl;
 import com.acme.category.exception.CategoryExistsException;
 import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.model.Category;
+import com.acme.category.model.CategoryModelAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLTimeoutException;
 import java.util.NoSuchElementException;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @RestController
@@ -19,12 +23,15 @@ public class CategoryRestController {
 
     private CategoryManagerImpl service;
 
+    private final CategoryModelAssembler assembler;
+
     // Kommunikation: Shared Kernel oder Consumer/Supplier
     // TODO: GET => Pia
     // TODO: POST => Dennis
     // TODO: DELETE => Matthias
-    public CategoryRestController (CategoryManagerImpl service) {
+    public CategoryRestController (CategoryManagerImpl service, CategoryModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
 
@@ -60,10 +67,8 @@ public class CategoryRestController {
     @PostMapping(value = "/categories")
     public ResponseEntity<?> addCategory(@RequestParam String name) {
         // TODO: Input als Pfad Param oder im Body?
-        // TODO: Links bauen
-        // Category category = null;
-        service.addCategory(name);
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        Category category = service.addCategory(name);
+        return new ResponseEntity<>(assembler.toModel(category), HttpStatus.CREATED);
 
     }
 
