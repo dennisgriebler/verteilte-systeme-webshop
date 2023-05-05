@@ -60,7 +60,9 @@ public class CategoryRestController {
 
     @GetMapping(value = "/categories/{categoryId}")
     public ResponseEntity<?> getCategory(@PathVariable int categoryId) {
+        log.info("Find category with id=" + categoryId);
         Category category = service.getCategory(categoryId);
+        log.info("Found category with id=" + category);
         return new ResponseEntity<>(assembler.toModel(category), HttpStatus.OK);
     }
 

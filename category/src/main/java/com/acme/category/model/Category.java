@@ -1,6 +1,8 @@
 package com.acme.category.model;
 
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -37,9 +39,13 @@ public class Category {
         this.name = name;
     }
 
+    @JsonProperty("categoryId")
     public Integer getId() {
         return id;
     }
+
+    @JsonProperty("categoryId")
+    public void setId(int id) { this.id = id;}
 
 
     @Override
