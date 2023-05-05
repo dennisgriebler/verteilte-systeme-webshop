@@ -1,9 +1,9 @@
 package com.acme.category.buisnesslogic.impl;
 
 
-
 import com.acme.category.buisnesslogic.CategoryManager;
 import com.acme.category.exception.CategoryExistsException;
+import com.acme.category.exception.CategoryNotFoundException;
 import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.repo.CategoryRepository;
 import com.acme.category.model.Category;
@@ -28,22 +28,22 @@ public class CategoryManagerImpl implements CategoryManager {
 		return helper.findAll();
 	}
 
-	public Category getCategory(int id) {
+	public Category getCategory(int id) throws CategoryNotFoundException {
 		Optional<Category> category =  helper.findById((long)id);
 		if (category.isPresent()) {
 			return category.get();
 		} else {
-			throw new NoSuchElementException("Category with ID " + id + " not found");
+			throw new CategoryNotFoundException("Category with ID " + id + " not found");
 		}
 	}
 
-	public Category getCategoryByName(String name) throws NoSuchElementException {
+	public Category getCategoryByName(String name) throws CategoryNotFoundException {
 		//Iterable<Category> it = helper.findAll();
 		//for (Category category : it) {
 		//	if (category.getName().equals(name)) return category;
 		//}
         Category category = helper.getCategoryByName(name);
-        if (category == null) throw new NoSuchElementException("Category with name " + name + " not found");
+        if (category == null) throw new CategoryNotFoundException("Category with name " + name + " not found");
         return category;
     }
 

@@ -3,19 +3,14 @@ package com.acme.category.controller;
 
 import com.acme.category.buisnesslogic.impl.CategoryManagerImpl;
 import com.acme.category.exception.CategoryExistsException;
+import com.acme.category.exception.CategoryNotFoundException;
+import com.acme.category.exception.DatabaseNotAvailableException;
 import com.acme.category.exception.InvalidCategoryNameException;
 import com.acme.category.model.Category;
 import com.acme.category.model.CategoryModelAssembler;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLTimeoutException;
-import java.util.NoSuchElementException;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @RestController
@@ -35,13 +30,13 @@ public class CategoryRestController {
     }
 
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<String> handleCategoryNotFoundException(CategoryNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(SQLTimeoutException.class)
-    public ResponseEntity<String> handleSQLTimeoutException(SQLTimeoutException e) {
+    @ExceptionHandler(DatabaseNotAvailableException.class)
+    public ResponseEntity<String> handleDatabaseNotAvailableException(DatabaseNotAvailableException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
