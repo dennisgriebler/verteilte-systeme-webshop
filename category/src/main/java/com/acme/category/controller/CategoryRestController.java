@@ -6,6 +6,7 @@ import com.acme.category.exception.CategoryExistsException;
 import com.acme.category.exception.CategoryNotFoundException;
 import com.acme.category.exception.DatabaseNotAvailableException;
 import com.acme.category.exception.InvalidCategoryNameException;
+import com.acme.category.exception.CouldNotDeleteCategoryException;
 import com.acme.category.model.Category;
 import com.acme.category.model.CategoryModelAssembler;
 import org.slf4j.Logger;
@@ -58,6 +59,11 @@ public class CategoryRestController {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.PRECONDITION_FAILED);
     }
 
+    @ExceptionHandler(CouldNotDeleteCategoryException.class)
+    public ResponseEntity<String> handleCouldNotDeleteCategoryException(CouldNotDeleteCategoryException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @GetMapping(value = "/categories/{categoryId}")
     public ResponseEntity<?> getCategory(@PathVariable int categoryId) {
         log.info("Find category with id=" + categoryId);
@@ -95,12 +101,15 @@ public class CategoryRestController {
     */
 
     @DeleteMapping(value = "/categories/{categoryId}")
-    public ResponseEntity<Category> deleteCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<Category> deleteCategory(@PathVariable Integer categoryId) {
         // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
         // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
         // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
-        boolean success = false; //service.deleteOne(categoryId);
-        return null;
+
+        service.delCategoryById(categoryId);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 }

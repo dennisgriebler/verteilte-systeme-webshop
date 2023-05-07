@@ -15,10 +15,9 @@ public interface ProductManager {
 	public Product addProduct(String name, double price, int categoryId, String details) throws Exception;
 
 	public List<Product> getProductsForSearchValues(String searchValue, Double searchMinPrice, Double searchMaxPrice);
-	
-	public boolean deleteProductsByCategoryId(int categoryId);
+
+	public void deleteProductsByCategoryId(int categoryId);
 	
     public void deleteProductById(int id);
-    
 	
 }

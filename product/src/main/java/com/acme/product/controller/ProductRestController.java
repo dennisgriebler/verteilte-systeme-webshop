@@ -5,6 +5,7 @@ import com.acme.product.buisnesslogic.impl.ProductManagerImpl;
 import com.acme.product.exception.CategoryNotFound;
 import com.acme.product.exception.DatabaseNotAvailableException;
 import com.acme.product.exception.ProductNotFoundException;
+import com.acme.product.exception.CouldNotDeleteProductException;
 import com.acme.product.model.Product;
 import com.acme.product.model.ProductModelAssembler;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 
 @RestController
 public class ProductRestController {
@@ -54,6 +54,10 @@ public class ProductRestController {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    @ExceptionHandler(CouldNotDeleteProductException.class)
+    public ResponseEntity<String> CouldNotDeleteProductException(CouldNotDeleteProductException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @GetMapping(value = "/products/{productId}")
     public ResponseEntity<?> getProduct(@PathVariable int productId) {
@@ -84,12 +88,26 @@ public class ProductRestController {
 
 
     @DeleteMapping(value = "/products/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
+    public ResponseEntity<HttpStatus> deleteProduct(@PathVariable Integer productId) {
         // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
         // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
         // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
-        boolean success = false; //service.deleteOne(productId);
-        return null;
+
+        service.deleteProductById(productId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/deleteProductsByCategoryId/{categoryId}")
+    public ResponseEntity<HttpStatus> deleteProductByCategory(@PathVariable Integer categoryId) {
+        // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
+        // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
+        // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
+
+        service.deleteProductsByCategoryId(categoryId);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 }

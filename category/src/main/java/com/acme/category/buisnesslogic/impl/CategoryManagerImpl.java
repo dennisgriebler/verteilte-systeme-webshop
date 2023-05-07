@@ -5,11 +5,20 @@ import com.acme.category.buisnesslogic.CategoryManager;
 import com.acme.category.exception.CategoryExistsException;
 import com.acme.category.exception.CategoryNotFoundException;
 import com.acme.category.exception.InvalidCategoryNameException;
+import com.acme.category.exception.CouldNotDeleteCategoryException;
 import com.acme.category.repo.CategoryRepository;
 import com.acme.category.model.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+import org.springframework.transaction.annotation.Transactional;
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -73,12 +82,67 @@ public class CategoryManagerImpl implements CategoryManager {
 
 	public void delCategory(Category cat) {
 
-    // TODO: Products are also deleted because of relation in Category.java
-		//helper.deleteById(cat.getId());
+        int categoryId = cat.getId();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = String.format("http://localhost:8090/deleteProductsByCategoryId/%d", categoryId);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
+
+        // Use of exchange due to further need for the HttpStatusCode, which is not obtained by delete
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+
+        HttpStatusCode statusCode = responseEntity.getStatusCode();
+
+        if (statusCode.equals(HttpStatus.NO_CONTENT)) {
+            try {
+                int deleteRecord = helper.deleteCategoryById(categoryId);
+                log.info("Deleted category count: " + deleteRecord);
+            }
+            catch (Exception e) {
+                log.info("Exception e: " + String.valueOf(e));
+                throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
+            }
+        }
+        else {
+            throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
+        }
 	}
 
-	public void delCategoryById(int id) {
+    @Transactional
+	public void delCategoryById(int categoryId) {
 		// TODO: Interkation mit Product Microservice
-        helper.deleteById((long) id);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = String.format("http://localhost:8090/deleteProductsByCategoryId/%d", categoryId);
+
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
+
+        // Use of exchange due to further need for the HttpStatusCode, which is not obtained by delete
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
+
+        HttpStatusCode statusCode = responseEntity.getStatusCode();
+
+        if (statusCode.equals(HttpStatus.NO_CONTENT)) {
+            try {
+                int deleteRecord = helper.deleteCategoryById(categoryId);
+                log.info("Deleted category count: " + deleteRecord);
+            }
+            catch (Exception e) {
+                log.info("Exception e: " + String.valueOf(e));
+                throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
+            }
+        }
+        else {
+            throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
+        }
+
+
 	}
 }

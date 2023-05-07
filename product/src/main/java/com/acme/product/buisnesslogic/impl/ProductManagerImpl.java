@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.acme.product.buisnesslogic.ProductManager;
 import com.acme.product.exception.CategoryNotFound;
 import com.acme.product.exception.ProductNotFoundException;
+import com.acme.product.exception.CouldNotDeleteProductException;
 import com.acme.product.model.Category;
 import com.acme.product.model.Product;
 import com.acme.product.repo.CategoryRepository;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductManagerImpl implements ProductManager {
@@ -125,15 +127,28 @@ public class ProductManagerImpl implements ProductManager {
             throw new CategoryNotFound(categoryId);
         }
 	}
-	
 
-	public void deleteProductById(int id) {
-		productRepo.deleteById(id);
+    @Transactional
+	public void deleteProductById(int categoryId) {
+        try {
+            int deletedRecord = productRepo.deleteProductById(categoryId);
+            log.info("Deleted product count: " + deletedRecord);
+        }
+        catch (Exception e) {
+            throw new CouldNotDeleteProductException(String.valueOf(categoryId));
+        }
 	}
 
-	public boolean deleteProductsByCategoryId(int categoryId) {
-		// TODO Auto-generated method stub
-		return false;
+    @Transactional
+	public void deleteProductsByCategoryId(int categoryId) {
+        try {
+            Optional<Category> category = categoryRepo.findByCategoryId(categoryId);
+            int deletedRecords = productRepo.deleteByCategory(category);
+            log.info("Deleted product count: " + deletedRecords);
+        }
+        catch (Exception e) {
+            throw new CouldNotDeleteProductException(String.valueOf(categoryId));
+        }
 	}
 
 }
