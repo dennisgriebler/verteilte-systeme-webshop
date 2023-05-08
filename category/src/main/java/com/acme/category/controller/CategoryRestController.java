@@ -39,7 +39,7 @@ public class CategoryRestController {
     // TODO: GET => Pia
     // TODO: POST => Dennis
     // TODO: DELETE => Matthias
-    public CategoryRestController (CategoryManagerImpl service, CategoryModelAssembler assembler) {
+    public CategoryRestController(CategoryManagerImpl service, CategoryModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
     }
@@ -73,17 +73,14 @@ public class CategoryRestController {
     }
 
     @GetMapping(value = "/categories")
-    public ResponseEntity<Iterable<?>> getCategories() {
-        // TODO: Methode hat eigentlich ein List<Category> zurück gegeben (ggf in impl des webshop anpassen
-        // TODO: Filterparameter im Produkt Microservice müssen noch untersuchen und behandelt werden
-        //Iterable<Category> allCategories = service.getCategories() ;
-        List<EntityModel<Category>> allCategories = StreamSupport.stream(service.getCategories().spliterator(), false)
+    public ResponseEntity<Iterable<?>> getCategories(@RequestParam(required = false, name = "name") String name) {
+        List<EntityModel<Category>> allCategories = StreamSupport.stream(service.getCategoriesByName(name).spliterator(), false)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                CollectionModel.of(allCategories, linkTo(methodOn(CategoryRestController.class).getCategories()).withSelfRel())
-                , HttpStatus.OK);
+                CollectionModel.of(allCategories, linkTo(methodOn(CategoryRestController.class)
+                        .getCategories(name)).withSelfRel()), HttpStatus.OK);
     }
 
     @PostMapping(value = "/categories")

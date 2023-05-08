@@ -16,16 +16,13 @@ import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class CategoryManagerImpl implements CategoryManager {
-	private CategoryRepository helper;
+    private CategoryRepository helper;
     private static final Logger log = LoggerFactory.getLogger(CategoryManagerImpl.class);
 
 
@@ -33,39 +30,44 @@ public class CategoryManagerImpl implements CategoryManager {
         this.helper = helper;
     }
 
-	public Iterable<Category> getCategories() {
-		return helper.findAll();
-	}
+    public Iterable<Category> getCategories() {
+        return helper.findAll();
+    }
 
-	public Category getCategory(int id) throws CategoryNotFoundException {
-		Optional<Category> category =  helper.findById((long)id);
-		if (category.isPresent()) {
-			return category.get();
-		} else {
-			throw new CategoryNotFoundException("Category with ID " + id + " not found");
-		}
-	}
+    public Category getCategory(int id) throws CategoryNotFoundException {
+        Optional<Category> category = helper.findById(id);
+        if (category.isPresent()) {
+            return category.get();
+        } else {
+            throw new CategoryNotFoundException("Category with ID " + id + " not found");
+        }
+    }
 
-	public Category getCategoryByName(String name) throws CategoryNotFoundException {
-		//Iterable<Category> it = helper.findAll();
-		//for (Category category : it) {
-		//	if (category.getName().equals(name)) return category;
-		//}
-        Category category = helper.getCategoryByName(name);
-        if (category == null) throw new CategoryNotFoundException("Category with name " + name + " not found");
-        return category;
+    public List<Category> getCategoriesByName(String name) throws CategoryNotFoundException {
+        //Name not unique. Thus, method returns multiple categories.
+        if (name == null) name = "";
+        List<Category> categories = helper.findCategoriesByNameContaining(name);
+        if (!categories.isEmpty()) {
+            return categories;
+        } else {
+            throw new CategoryNotFoundException("No categories found");
+        }
     }
 
     public boolean existsCategoryByName(String name) {
-        try { getCategoryByName(name); }
-        catch (CategoryNotFoundException e) { return false; }
+        try {
+            getCategoriesByName(name);
+        } catch (CategoryNotFoundException e) {
+            return false;
+        }
         return true;
     }
 
     public Category addCategory(Category category) throws CategoryExistsException {
         return addCategory(category == null ? null : category.getName());
     }
-	public Category addCategory(String name) throws CategoryExistsException {
+
+    public Category addCategory(String name) throws CategoryExistsException {
         log.info("Categorie name: " + name);
 
         if (name == null || name.length() == 0)
@@ -78,9 +80,9 @@ public class CategoryManagerImpl implements CategoryManager {
 
         Category category = new Category(name);
         return helper.save(category);
-	}
+    }
 
-	public void delCategory(Category cat) {
+    public void delCategory(Category cat) {
 
         int categoryId = cat.getId();
 
@@ -101,20 +103,18 @@ public class CategoryManagerImpl implements CategoryManager {
             try {
                 int deleteRecord = helper.deleteCategoryById(categoryId);
                 log.info("Deleted category count: " + deleteRecord);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.info("Exception e: " + String.valueOf(e));
                 throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
             }
-        }
-        else {
+        } else {
             throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
         }
-	}
+    }
 
     @Transactional
-	public void delCategoryById(int categoryId) {
-		// TODO: Interkation mit Product Microservice
+    public void delCategoryById(int categoryId) {
+        // TODO: Interkation mit Product Microservice
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -133,16 +133,14 @@ public class CategoryManagerImpl implements CategoryManager {
             try {
                 int deleteRecord = helper.deleteCategoryById(categoryId);
                 log.info("Deleted category count: " + deleteRecord);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.info("Exception e: " + String.valueOf(e));
                 throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
             }
-        }
-        else {
+        } else {
             throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
         }
 
 
-	}
+    }
 }

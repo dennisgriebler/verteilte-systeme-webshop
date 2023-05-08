@@ -64,20 +64,18 @@ public class ProductRestController {
         Product product = service.getProductById(productId);
         return new ResponseEntity<>(assembler.toModel(product), HttpStatus.OK);
     }
-
     @GetMapping(value = "/products")
-    public ResponseEntity<Iterable<?>> getProducts() {
-        // TODO: Filterparameter im Produkt Microservice müssen noch untersuchen und behandelt werden
-        //List<Product> allProducts = service.getProducts();
-        //return new ResponseEntity<>(allProducts, HttpStatus.OK);
-
-        List<EntityModel<Product>> allProducts = StreamSupport.stream(service.getProducts().spliterator(), false)
+    public ResponseEntity<Iterable<?>> getProducts(@RequestParam(required = false, name = "searchDescription") String searchDescription,
+                                                   @RequestParam(required = false, name = "searchMinPrice") Double searchMinPrice,
+                                                   @RequestParam(required = false, name = "searchMaxPrice") Double searchMaxPrice) {
+        List<EntityModel<Product>> allProducts = StreamSupport
+                .stream(service.getProductsForSearchValues(searchDescription, searchMinPrice, searchMaxPrice).spliterator(), false)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                CollectionModel.of(allProducts, linkTo(methodOn(ProductRestController.class).getProducts()).withSelfRel())
-                , HttpStatus.OK);
+                CollectionModel.of(allProducts, linkTo(methodOn(ProductRestController.class)
+                        .getProducts(searchDescription, searchMinPrice, searchMaxPrice)).withSelfRel()), HttpStatus.OK);
     }
 
     @PostMapping(value = "/products")
