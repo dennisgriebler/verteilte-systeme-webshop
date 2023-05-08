@@ -11,6 +11,28 @@ services:
           aliases:
               - legacywebshop
 
+  # product_microservice:
+  #   build:
+  #     context: ./Microservices/Product_Microservice
+  #     dockerfile: ../.././docker/DockerfileProductMicroservice
+  #   ports:
+  #     - "8889:8081"
+  #   networks:
+  #     local_dev_net:
+  #         aliases:
+  #             - productMicroservice
+
+  category_microservice:
+    build:
+      context: ./Microservices/category
+      dockerfile: ../.././docker/DockerfileCategoryMicroservice
+    ports:
+      - "8889:8081"
+    networks:
+      local_dev_net:
+          aliases:
+              - categoryMicroservice
+
   web-shop-db-image:
     build:
       context: ./
