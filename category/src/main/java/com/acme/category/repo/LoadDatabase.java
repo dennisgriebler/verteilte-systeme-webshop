@@ -19,6 +19,6 @@ class LoadDatabase {
         return args -> {
             log.info("Preloading " + repository.save(new Category("Käse")));
             log.info("Preloading " + repository.save(new Category("Früchte")));
-        };
+       };
     }
 }
