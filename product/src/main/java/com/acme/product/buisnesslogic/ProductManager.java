@@ -10,7 +10,7 @@ public interface ProductManager {
 
 	public Product getProductById(int id);
 
-	public Product getProductByName(String name);
+	public List<Product> getProductsByName(String name);
 
 	public Product addProduct(String name, double price, int categoryId, String details) throws Exception;
 

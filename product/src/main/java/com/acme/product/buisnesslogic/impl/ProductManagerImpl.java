@@ -1,9 +1,6 @@
 package com.acme.product.buisnesslogic.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.acme.product.buisnesslogic.ProductManager;
 import com.acme.product.exception.CategoryNotFound;
@@ -15,6 +12,8 @@ import com.acme.product.repo.CategoryRepository;
 import com.acme.product.repo.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -28,54 +27,48 @@ public class ProductManagerImpl implements ProductManager {
 
     private ProductRepository productRepo;
     private CategoryRepository categoryRepo;
-	
-	public ProductManagerImpl(ProductRepository productRepo, CategoryRepository categoryRepo) {
+
+    public ProductManagerImpl(ProductRepository productRepo, CategoryRepository categoryRepo) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
-	}
+    }
 
-	public List<Product> getProducts() {
-		return productRepo.findAll();
-	}
+    public List<Product> getProducts() {
+        return productRepo.findAll();
+    }
 
-    // TODO: Suche mit min-Preis, max-Preis, Beschreibung
-	public List<Product> getProductsForSearchValues(String searchDescription, Double searchMinPrice, Double searchMaxPrice) {
-		//return new ProductDAO().getProductListByCriteria(searchDescription, searchMinPrice, searchMaxPrice);
-        /* Im Monolithen: ProductDao.java
-        // Define Search HQL:
-			if (searchDescription != null && searchDescription.length() > 0)
-			{	// searchValue is set:
-				searchDescription = "%"+searchDescription+"%";
-				crit.add(Restrictions.ilike("details", searchDescription ));
-			}
+    public List<Product> getProductsForSearchValues(String searchDescription, Double searchMinPrice, Double searchMaxPrice) throws ProductNotFoundException {
+        if (searchDescription == null) searchDescription = "";
+        if (searchMinPrice == null) searchMinPrice = 0.0;
+        if (searchMaxPrice == null) searchMaxPrice = Double.MAX_VALUE;
 
-			if (( searchMinPrice != null) && ( searchMaxPrice != null)) {
-					crit.add(Restrictions.between("price", searchMinPrice, searchMaxPrice));
-				}
-			else 	if( searchMinPrice != null) {
-					crit.add(Restrictions.ge("price", searchMinPrice));
-					}
-			else if ( searchMaxPrice != null) {
-					crit.add(Restrictions.le("price", searchMaxPrice));
-			}
+        List<Product> products = productRepo.findProductsByDetailsContainingAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(searchDescription, searchMinPrice, searchMaxPrice);
+        if (!products.isEmpty()) {
+            return products;
+        } else {
+            throw new ProductNotFoundException("No products found");
+        }
+    }
 
-         */
-        return null;
-	}
-
-	public Product getProductById(int id) throws ProductNotFoundException {
-        Optional<Product> product =  productRepo.findById(id);
+    public Product getProductById(int id) throws ProductNotFoundException {
+        Optional<Product> product = productRepo.findById(id);
         if (product.isPresent()) {
             return product.get();
         } else {
             throw new ProductNotFoundException("Product with ID " + id + " not found");
         }
-	}
+    }
 
-	public Product getProductByName(String name) {
-        // Eins oder mehrere? Ist der Name unique?
-		return productRepo.findByName(name);
-	}
+    public List<Product> getProductsByName(String name) throws ProductNotFoundException {
+        //Name not unique. Thus, method returns multiple products.
+        if (name == null) name = "";
+        List<Product> products = productRepo.findAllByName(name);
+        if (!products.isEmpty()) {
+            return products;
+        } else {
+            throw new ProductNotFoundException("No products found");
+        }
+    }
 
     public Product addProduct(Product product) throws CategoryNotFound {
         log.info("product: " + product);
@@ -85,8 +78,8 @@ public class ProductManagerImpl implements ProductManager {
     }
 
     // TODO: Aufruf von Kategorie Microservice
-	public Product addProduct(String name, double price, int categoryId, String details) throws CategoryNotFound {
-		//int productId = -1;
+    public Product addProduct(String name, double price, int categoryId, String details) throws CategoryNotFound {
+        //int productId = -1;
 
         log.info("name=" + name + "; categoryId=" + categoryId, "; details=" + details);
         try {
@@ -98,7 +91,7 @@ public class ProductManagerImpl implements ProductManager {
                     "http://localhost:8080/categories/{categoryId}",
                     Category.class, params);
 
-            log.info("response body from category service="+ response.getBody().toString());
+            log.info("response body from category service=" + response.getBody().toString());
 
             Category category = response.getBody();
             Optional<Category> retrieval = categoryRepo.findByCategoryId(category.getCategoryId());
@@ -112,9 +105,9 @@ public class ProductManagerImpl implements ProductManager {
                 category = retrieval.get();
             }
             Product product;
-            if(details == null){
+            if (details == null) {
                 product = new Product(name, price, category);
-            } else{
+            } else {
                 product = new Product(name, price, category, details);
             }
 
@@ -122,33 +115,30 @@ public class ProductManagerImpl implements ProductManager {
             log.info("saved product: " + saved);
             return saved;
 
-        }
-        catch (RestClientException ex) {
+        } catch (RestClientException ex) {
             throw new CategoryNotFound(categoryId);
         }
-	}
+    }
 
     @Transactional
-	public void deleteProductById(int categoryId) {
+    public void deleteProductById(int categoryId) {
         try {
             int deletedRecord = productRepo.deleteProductById(categoryId);
             log.info("Deleted product count: " + deletedRecord);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new CouldNotDeleteProductException(String.valueOf(categoryId));
         }
-	}
+    }
 
     @Transactional
-	public void deleteProductsByCategoryId(int categoryId) {
+    public void deleteProductsByCategoryId(int categoryId) {
         try {
             Optional<Category> category = categoryRepo.findByCategoryId(categoryId);
             int deletedRecords = productRepo.deleteByCategory(category);
             log.info("Deleted product count: " + deletedRecords);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new CouldNotDeleteProductException(String.valueOf(categoryId));
         }
-	}
+    }
 
 }
