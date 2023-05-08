@@ -1,24 +1,24 @@
 ###
 # Alle Kategorien
 # Erwartung: Status 200
-GET http://localhost:8080/categories
+GET http://localhost:8890/categories
 
 ###
 # Eine vorhandene Kategorie
 # Erwartung: Status 200
-GET http://localhost:8080/categories/1
+GET http://localhost:8890/categories/1
 
 ###
 # Eine nicht vorhandene Kategorie
 # Erwartung: Status 404 + Validierungsnachricht
-GET http://localhost:8080/categories/11111
+GET http://localhost:8890/categories/11111
 
 
 ###
 # Kategorie anlegen
 # Erwartung: Status 201
 #POST http://localhost:8080/categories?name=test1
-POST http://localhost:8080/categories
+POST http://localhost:8890/categories
 Content-Type: application/json
 
 { "name" :  "categoryName" }
@@ -27,7 +27,7 @@ Content-Type: application/json
 ###
 # Kategorie mit leerem Namen anlegen
 # Erwartung: Status 412 + Validierungsnachricht
-POST http://localhost:8080/categories
+POST http://localhost:8890/categories
 Content-Type: application/json
 Cache-Control: no-cache
 
@@ -36,7 +36,7 @@ Cache-Control: no-cache
 ###
 # Kategorie mit vorhandenem Namen anlegen
 # Erwartung: Status 412 + Validierungsnachricht
-POST http://localhost:8080/categories
+POST http://localhost:8890/categories
 Content-Type: application/json
 Cache-Control: no-cache
 
@@ -48,9 +48,9 @@ Cache-Control: no-cache
 ###
 # vorhandene Kategorie löschen
 # Erwartung: Status 200
-DELETE http://localhost:8080/categories/3
+DELETE http://localhost:8890/categories/3
 
 ###
 # nicht vorhandene Kategorie löschen
 # Erwartung: Status 200
-DELETE http://localhost:8080/categories/4
+DELETE http://localhost:8890/categories/4
