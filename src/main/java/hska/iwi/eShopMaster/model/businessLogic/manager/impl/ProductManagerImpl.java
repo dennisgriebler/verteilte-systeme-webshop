@@ -45,21 +45,17 @@ public class ProductManagerImpl implements ProductManager {
 			} else{
 				product = new Product(name, price, category, details);
 			}
-			
 			helper.saveObject(product);
 			productId = product.getId();
 		}
-			 
 		return productId;
 	}
-	
 
 	public void deleteProductById(int id) {
 		helper.deleteById(id);
 	}
 
 	public boolean deleteProductsByCategoryId(int categoryId) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

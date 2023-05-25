@@ -14,9 +14,6 @@ import net.minidev.json.annotate.JsonIgnore;
 @JsonIgnoreProperties("id")
 public class Category implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
     @Id
@@ -26,9 +23,6 @@ public class Category implements java.io.Serializable {
 
     @Column(name = "categoryId", nullable = false)
     private int categoryId;
-
-    //@Column(name = "name", nullable = false)
-    //private String name;
 
 	public Category() {}
 
@@ -49,16 +43,23 @@ public class Category implements java.io.Serializable {
 		return this.categoryId;
 	}
 
-    /*
-	public void setName(int id_external) {
-		this.externalId = id_external;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Category category = (Category) o;
 
-    public String getName() {
-        return name;
+        if (id != category.id) return false;
+        return categoryId == category.categoryId;
     }
-     */
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + categoryId;
+        return result;
+    }
 
     @Override
     public String toString() {

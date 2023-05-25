@@ -6,6 +6,9 @@
 GET http://{{host}}:{{port}}/products
 
 ###
+GET http://{{host}}:{{port}}/products?searchMinPrice=30
+
+###
 # Ein vorhandenes Produkt
 # Erwartung: Status 200
 GET http://{{host}}:{{port}}/products/1
@@ -32,17 +35,12 @@ Content-Type: application/json
   }
 }
 
-
-
-
-
-
 ###
 # vorhandenes Produkt löschen
-# Erwartung: Status 200
-DELETE http://localhost:8080/products/3
+# Erwartung: Status 204
+DELETE http://localhost:8081/products/3
 
 ###
 # nicht vorhandenes Produkt löschen
-# Erwartung: Status 200
+# Erwartung: Status 204
 DELETE http://localhost:8080/products/4

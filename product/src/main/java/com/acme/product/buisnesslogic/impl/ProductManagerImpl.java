@@ -77,10 +77,7 @@ public class ProductManagerImpl implements ProductManager {
         //return product;
     }
 
-    // TODO: Aufruf von Kategorie Microservice
     public Product addProduct(String name, double price, int categoryId, String details) throws CategoryNotFound {
-        //int productId = -1;
-
         log.info("name=" + name + "; categoryId=" + categoryId, "; details=" + details);
         try {
             // Kategorie Microservice nach der Kategorie befragen

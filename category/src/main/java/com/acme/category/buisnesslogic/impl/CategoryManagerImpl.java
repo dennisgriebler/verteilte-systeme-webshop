@@ -83,39 +83,12 @@ public class CategoryManagerImpl implements CategoryManager {
     }
 
     public void delCategory(Category cat) {
-
         int categoryId = cat.getId();
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        String url = String.format("http://localhost:8090/deleteProductsByCategoryId/%d", categoryId);
-
-        HttpHeaders headers = new HttpHeaders();
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(null, headers);
-
-        // Use of exchange due to further need for the HttpStatusCode, which is not obtained by delete
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, String.class);
-
-        HttpStatusCode statusCode = responseEntity.getStatusCode();
-
-        if (statusCode.equals(HttpStatus.NO_CONTENT)) {
-            try {
-                int deleteRecord = helper.deleteCategoryById(categoryId);
-                log.info("Deleted category count: " + deleteRecord);
-            } catch (Exception e) {
-                log.info("Exception e: " + String.valueOf(e));
-                throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
-            }
-        } else {
-            throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
-        }
+        delCategoryById(categoryId);
     }
 
     @Transactional
     public void delCategoryById(int categoryId) {
-        // TODO: Interkation mit Product Microservice
-
         RestTemplate restTemplate = new RestTemplate();
 
         String url = String.format("http://localhost:8090/deleteProductsByCategoryId/%d", categoryId);
@@ -140,7 +113,5 @@ public class CategoryManagerImpl implements CategoryManager {
         } else {
             throw new CouldNotDeleteCategoryException(String.valueOf(categoryId));
         }
-
-
     }
 }
