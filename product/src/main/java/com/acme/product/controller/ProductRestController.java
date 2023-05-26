@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class ProductRestController {
 
     private static final Logger log = LoggerFactory.getLogger(com.acme.product.controller.ProductRestController.class);
@@ -32,8 +32,6 @@ public class ProductRestController {
     private final ProductModelAssembler assembler;
 
     // Kommunikation: Shared Kernel oder Consumer/Supplier
-    // TODO: GET => Pia
-    // TODO: DELETE => Matthias
     public ProductRestController(ProductManagerImpl service, ProductModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
@@ -65,17 +63,17 @@ public class ProductRestController {
         return new ResponseEntity<>(assembler.toModel(product), HttpStatus.OK);
     }
     @GetMapping(value = "/products")
-    public ResponseEntity<Iterable<?>> getProducts(@RequestParam(required = false, name = "searchDescription") String searchDescription,
-                                                   @RequestParam(required = false, name = "searchMinPrice") Double searchMinPrice,
-                                                   @RequestParam(required = false, name = "searchMaxPrice") Double searchMaxPrice) {
+    public ResponseEntity<Iterable<?>> getProducts(@RequestParam(required = false, defaultValue = "", name = "searchDescription") String searchDescription,
+                                                   @RequestParam(required = false, defaultValue = "",name = "searchMinPrice") Double searchMinPrice,
+                                                   @RequestParam(required = false, defaultValue = "", name = "searchMaxPrice") Double searchMaxPrice) {
+        log.info(searchDescription, searchMinPrice, searchMaxPrice);
         List<EntityModel<Product>> allProducts = StreamSupport
                 .stream(service.getProductsForSearchValues(searchDescription, searchMinPrice, searchMaxPrice).spliterator(), false)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(
-                CollectionModel.of(allProducts, linkTo(methodOn(ProductRestController.class)
-                        .getProducts(searchDescription, searchMinPrice, searchMaxPrice)).withSelfRel()), HttpStatus.OK);
+                CollectionModel.of(allProducts), HttpStatus.OK);
     }
 
     @PostMapping(value = "/products")
@@ -87,10 +85,6 @@ public class ProductRestController {
 
     @DeleteMapping(value = "/products/{productId}")
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable Integer productId) {
-        // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
-        // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
-        // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
-
         service.deleteProductById(productId);
 
         return ResponseEntity.noContent().build();
@@ -98,10 +92,6 @@ public class ProductRestController {
 
     @DeleteMapping(value = "/deleteProductsByCategoryId/{categoryId}")
     public ResponseEntity<HttpStatus> deleteProductByCategory(@PathVariable Integer categoryId) {
-        // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
-        // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
-        // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
-
         service.deleteProductsByCategoryId(categoryId);
 
         return ResponseEntity.noContent().build();

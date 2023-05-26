@@ -23,14 +23,6 @@ public class Category {
     public Category(String name) {
         this.name = name;
     }
-
-    /*
-    public Category(String name, Set<Integer> products) {
-        this.name = name;
-        this.products = products;
-    }
-    */
-
     public String getName() {
         return name;
     }

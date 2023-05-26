@@ -36,9 +36,6 @@ public class CategoryRestController {
     private final CategoryModelAssembler assembler;
 
     // Kommunikation: Shared Kernel oder Consumer/Supplier
-    // TODO: GET => Pia
-    // TODO: POST => Dennis
-    // TODO: DELETE => Matthias
     public CategoryRestController(CategoryManagerImpl service, CategoryModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;
@@ -89,24 +86,12 @@ public class CategoryRestController {
         return new ResponseEntity<>(assembler.toModel(category), HttpStatus.CREATED);
     }
 
-    /*
-    @PostMapping(value = "/categories")
-    public ResponseEntity<?> addCategory(@RequestParam String name) {
-        Category category = service.addCategory(name);
-        return new ResponseEntity<>(assembler.toModel(category), HttpStatus.CREATED);
-    }
-    */
 
     @DeleteMapping(value = "/categories/{categoryId}")
     public ResponseEntity<Category> deleteCategory(@PathVariable Integer categoryId) {
-        // TODO: Fall Kategorie ID nicht vorhanden => Behandlung, Löschen war erfolgreich!
-        // TODO: Produkt löschen via Produkt Microservice... => Transaktion?
-        // TODO: Ist ein cascading delete in verteilten System mit Spring Werkzeugen möglich?
-
         service.delCategoryById(categoryId);
 
         return ResponseEntity.noContent().build();
-
     }
 
 }

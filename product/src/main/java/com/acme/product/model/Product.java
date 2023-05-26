@@ -3,6 +3,8 @@ package com.acme.product.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 
 /**
  * This class contains details about products.
@@ -90,6 +92,21 @@ public class Product implements java.io.Serializable {
 	public void setDetails(String details) {
 		this.details = details;
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        return id == product.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
     @Override
     public String toString() {
