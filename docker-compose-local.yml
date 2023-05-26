@@ -4,15 +4,13 @@ services:
     build:
       context: ./
       dockerfile: ./docker/Dockerfile
+    image: klausb1805/webshop
     ports:
       - "8888:8080"
     networks:
       local_dev_net:
           aliases:
               - legacywebshop
-
-
-
 
 
   web-shop-db-image:
@@ -37,6 +35,7 @@ services:
     build:
       context: ./category/
       dockerfile: ./docker/DockerfileCategory
+    image: klausb1805/category
     ports:
       - "8890:8082"
     networks:
@@ -50,6 +49,7 @@ services:
     build:
       context: ./product/
       dockerfile: ./docker/DockerfileProduct
+    image: klausb1805/product
     ports:
       - "8889:8081"
     networks:

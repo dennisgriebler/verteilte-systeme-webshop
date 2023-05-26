@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.7.9
+        resources: {}
+        name: mysql
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom: 
+              secretKeyRef: 
+                key: mysqlrootpwd
+                name: mysecret
+          - name: MYSQL_PASSWORD
+            valueFrom: 
+              secretKeyRef: 
+                key: mysqlpwd
+                name: mysecret
+          - name: MYSQL_DATABASE
+            value: webshop
+          - name: MYSQL_USER
+            value: webshopuser
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mysql-volume-claim
+      - name: mysql-initdb
+        configMap:
+          name: mysql-config 

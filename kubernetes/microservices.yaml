@@ -1,0 +1,181 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: apache
+  name: apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: apache
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: apache
+    spec:
+      containers:
+      - image: klausb1805/apache:latest
+        name: apache
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: category
+  name: category
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: category
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: category
+    spec:
+      containers:
+      - image: klausb1805/category:latest
+        name: category
+        ports:
+        - containerPort: 8890
+        resources: {}
+status: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: product
+  name: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: product
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: product
+    spec:
+      containers:
+      - image: klausb1805/product:latest
+        name: product
+        ports:
+        - containerPort: 8889
+        resources: {}
+status: {}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: webshop
+  name: webshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: webshop
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: webshop
+    spec:
+      containers:
+      - image: klausb1805/webshop:latest
+        name: webshop
+        ports:
+        - containerPort: 8888
+        resources: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: apache
+  name: apache
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: apache
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: category
+  name: categories
+spec:
+  ports:
+  - port: 8890
+    protocol: TCP
+    targetPort: 8890
+  selector:
+    run: category
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: product
+  name: products
+spec:
+  ports:
+  - port: 8889
+    protocol: TCP
+    targetPort: 8889
+  selector:
+    run: product
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: webshop
+  name: webshop
+spec:
+  ports:
+  - port: 8888
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    run: webshop
+  type: LoadBalancer
+status:
+  loadBalancer: {}
