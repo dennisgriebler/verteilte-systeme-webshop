@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: apache
+    app: apache
   name: apache
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: apache
+      app: apache
   strategy: {}
   template:
     metadata:
       labels:
-        run: apache
+        app: apache
     spec:
       containers:
-      - image: klausb1805/apache:latest
+      - image: klausb1805/apache:v6
         name: apache
         ports:
         - containerPort: 80
@@ -29,24 +29,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: category
+    app: category
   name: category
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      run: category
+      app: category
   strategy: {}
   template:
     metadata:
       labels:
-        run: category
+        app: category
     spec:
       containers:
       - image: klausb1805/category:latest
         name: category
         ports:
-        - containerPort: 8890
+        - containerPort: 8082
         resources: {}
 status: {}
 
@@ -56,24 +56,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: product
+    app: product
   name: product
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: product
+      app: product
   strategy: {}
   template:
     metadata:
       labels:
-        run: product
+        app: product
     spec:
       containers:
       - image: klausb1805/product:latest
         name: product
         ports:
-        - containerPort: 8889
+        - containerPort: 8081
         resources: {}
 status: {}
 
@@ -83,24 +83,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: webshop
+    app: webshop
   name: webshop
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: webshop
+      app: webshop
   strategy: {}
   template:
     metadata:
       labels:
-        run: webshop
+        app: webshop
     spec:
       containers:
       - image: klausb1805/webshop:latest
         name: webshop
         ports:
-        - containerPort: 8888
+        - containerPort: 8080
         resources: {}
 status: {}
 
@@ -110,15 +110,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: apache
-  name: apache
+    app: apache
+  name: apache-service
 spec:
   ports:
   - port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    run: apache
+    app: apache
   type: LoadBalancer
 status:
   loadBalancer: {}
@@ -129,15 +129,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: category
+    app: category
   name: categories
 spec:
   ports:
   - port: 8890
     protocol: TCP
-    targetPort: 8890
+    targetPort: 8082
   selector:
-    run: category
+    app: category
   type: LoadBalancer
 status:
   loadBalancer: {}
@@ -148,15 +148,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: product
+    app: product
   name: products
 spec:
   ports:
   - port: 8889
     protocol: TCP
-    targetPort: 8889
+    targetPort: 8081
   selector:
-    run: product
+    app: product
   type: LoadBalancer
 status:
   loadBalancer: {}
@@ -167,15 +167,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: webshop
-  name: webshop
+    app: webshop
+  name: webshop-service
 spec:
   ports:
   - port: 8888
     protocol: TCP
-    targetPort: 8888
+    targetPort: 8080
   selector:
-    run: webshop
+    app: webshop
   type: LoadBalancer
 status:
   loadBalancer: {}

@@ -1,0 +1,7 @@
+kubectl apply -f secret.yaml
+kubectl apply -f mysql-config.yaml
+kubectl apply -f mysql-pvc-pv.yaml
+kubectl apply -f mysql-deployment.yaml
+kubectl apply -f mysql-service.yaml
+
+kubectl apply -f microservices.yaml

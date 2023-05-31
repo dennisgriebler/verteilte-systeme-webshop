@@ -1,0 +1,9 @@
+kubectl delete deployment mysql
+kubectl delete pvc mysql-volume-claim
+kubectl delete pv mysql-pv-volume
+kubectl delete configmap mysql-config
+kubectl delete secret mysecret
+kubectl delete service web-shop-db-image
+
+kubectl delete deployment product webshop apache category
+kubectl delete service products webshop-service categories apache-service

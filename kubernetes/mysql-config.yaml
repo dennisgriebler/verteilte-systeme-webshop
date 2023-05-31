@@ -5,9 +5,9 @@ metadata:
   labels:
     app: mysql
 data:
-  MYSQL_USER: webhsopuser
+  MYSQL_USER: webshopuser
   MYSQL_DATABASE: webshop
-  initdb.sql: |
+  create-tables.sql: |
     CREATE TABLE category (
       id INT NOT NULL AUTO_INCREMENT,
       name VARCHAR(255) NOT NULL,
@@ -68,8 +68,9 @@ data:
       name VARCHAR(255) NOT NULL,
       PRIMARY KEY (id)
     ) ENGINE=InnoDB;
+  initial.sql: | 
+    USE webshop;
+    INSERT INTO `role` (`level1`, `type`) VALUES(0, 'admin');
+    INSERT INTO `role` (`level1`, `type`) VALUES(1, 'user');
 
-    insert into `role` (`level1`, `type`) values(0, 'admin');
-    insert into `role` (`level1`, `type`) values(1, 'user');
-
-    insert into `customer` (`name`, `lastname`, `password`, `username`, `role`) values('admin', 'admin', 'admin', 'admin', 1);
+    INSERT INTO `customer` (`name`, `lastname`, `password`, `username`, `role`) VALUES('admin', 'admin', 'admin', 'admin', 1);

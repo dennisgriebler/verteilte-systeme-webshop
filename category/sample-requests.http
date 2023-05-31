@@ -12,7 +12,7 @@ GET http://localhost:8890/categories/1
 # Eine nicht vorhandene Kategorie
 # Erwartung: Status 404 + Validierungsnachricht
 GET http://localhost:8890/categories/11111
-
+ 
 
 ###
 # Kategorie anlegen
