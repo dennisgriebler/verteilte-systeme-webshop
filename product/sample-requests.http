@@ -3,27 +3,27 @@
 ###
 # Alle Produkte
 # Erwartung: Status 200
-GET http://{{host}}:{{port}}/products
+GET http://localhost:8889/products
 
 ###
-GET http://{{host}}:{{port}}/products?searchMinPrice=30
+GET http://localhost:8889/products?searchMinPrice=30
 
 ###
 # Ein vorhandenes Produkt
 # Erwartung: Status 200
-GET http://{{host}}:{{port}}/products/1
+GET http://localhost:8889/products/1
 
 ###
 # Ein nicht vorhandenes Produkt
 # Erwartung: Status 404 + Validierungsnachricht
-GET http://{{host}}:{{port}}/products/11111
+GET http://localhost:8889/products/11111
 
 
 ###
 # Produkt anlegen
 # Erwartung: Status 201
 #POST http://localhost:8080/products?name=test1
-POST http://{{host}}:{{port}}/products
+POST http://localhost:8889/products
 Content-Type: application/json
 
 {
@@ -31,14 +31,14 @@ Content-Type: application/json
   "price" : "999.98",
   "details" : "Details",
   "category" : {
-    "categoryId" : "2"
+    "categoryId" : "10"
   }
 }
 
 ###
 # vorhandenes Produkt löschen
 # Erwartung: Status 204
-DELETE http://localhost:8081/products/3
+DELETE http://localhost:8889/products/1
 
 ###
 # nicht vorhandenes Produkt löschen

@@ -31,7 +31,7 @@ public class Product implements java.io.Serializable {
 
 	
 	@ManyToOne
-	@JoinColumn(name = "category_externalId")
+	@JoinColumn(name = "categoryIdFK", referencedColumnName = "categoryId")
 	private Category category;
 
 	@Column(name = "details")

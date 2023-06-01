@@ -81,12 +81,13 @@ public class ProductManagerImpl implements ProductManager {
         log.info("name=" + name + "; categoryId=" + categoryId, "; details=" + details);
         try {
             // Kategorie Microservice nach der Kategorie befragen
-            Map<String, Integer> params = new HashMap<>();
-            params.put("categoryId", categoryId);
+            //Map<String, Integer> params = new HashMap<>();
+            //params.put("categoryId", categoryId);
+            String url = String.format("http://categories.default.svc.cluster.local:8890/categories/%d", categoryId);
             ResponseEntity<Category> response
                     = new RestTemplate().getForEntity(
-                    "http://localhost:8080/categories/{categoryId}",
-                    Category.class, params);
+                    url,
+                    Category.class);
 
             log.info("response body from category service=" + response.getBody().toString());
 

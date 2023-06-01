@@ -91,7 +91,7 @@ public class CategoryManagerImpl implements CategoryManager {
     public void delCategoryById(int categoryId) {
         RestTemplate restTemplate = new RestTemplate();
 
-        String url = String.format("http://localhost:8090/deleteProductsByCategoryId/%d", categoryId);
+        String url = String.format("http://products.default.svc.cluster.local:8889/deleteProductsByCategoryId/%d", categoryId);
 
         HttpHeaders headers = new HttpHeaders();
 

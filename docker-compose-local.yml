@@ -41,7 +41,7 @@ services:
     networks:
       local_dev_net:
         aliases:
-          - categoryms
+          - categories
     depends_on:
       - web-shop-db-image
 
@@ -55,7 +55,7 @@ services:
     networks:
       local_dev_net:
         aliases:
-          - productms
+          - products
     depends_on:
       - web-shop-db-image
 
