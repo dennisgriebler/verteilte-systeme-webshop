@@ -34,7 +34,7 @@ services:
   categoryms:
     build:
       context: ./category/
-      dockerfile: ./docker/DockerfileCategory
+      dockerfile: ./Dockerfile
     image: klausb1805/category
     ports:
       - "8890:8082"
@@ -48,7 +48,7 @@ services:
   productms:
     build:
       context: ./product/
-      dockerfile: ./docker/DockerfileProduct
+      dockerfile: ./Dockerfile
     image: klausb1805/product
     ports:
       - "8889:8081"
