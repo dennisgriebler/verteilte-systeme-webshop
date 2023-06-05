@@ -6,7 +6,7 @@ GET http://localhost:8890/categories
 ###
 # Eine vorhandene Kategorie
 # Erwartung: Status 200
-GET http://localhost:8890/categories/1
+GET http://localhost:8890/categories/11
 
 ###
 # Eine nicht vorhandene Kategorie
@@ -21,7 +21,7 @@ GET http://localhost:8890/categories/11111
 POST http://localhost:8890/categories
 Content-Type: application/json
 
-{ "name" :  "categoryName" }
+{ "name" :  "categoryName3"}
 
 
 ###
@@ -41,16 +41,16 @@ Content-Type: application/json
 Cache-Control: no-cache
 
 
-{ "name" :  "categoryName" }
+{ "name" :  "categoryNamef" }
 
 
 
 ###
 # vorhandene Kategorie löschen
-# Erwartung: Status 200
-DELETE http://localhost:8890/categories/3
+# Erwartung: Status 204
+DELETE http://localhost:8890/categories/5
 
 ###
 # nicht vorhandene Kategorie löschen
-# Erwartung: Status 200
-DELETE http://localhost:8890/categories/4
+# Erwartung: Status 204
+DELETE http://localhost:8890/categories/10

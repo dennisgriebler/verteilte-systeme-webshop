@@ -43,7 +43,7 @@ spec:
         app: category
     spec:
       containers:
-      - image: klausb1805/category:latest
+      - image: klausb1805/category:v6
         name: category
         ports:
         - containerPort: 8082
@@ -70,7 +70,7 @@ spec:
         app: product
     spec:
       containers:
-      - image: klausb1805/product:latest
+      - image: klausb1805/product:v7
         name: product
         ports:
         - containerPort: 8081

@@ -34,28 +34,28 @@ services:
   categoryms:
     build:
       context: ./category/
-      dockerfile: ./docker/DockerfileCategory
+      dockerfile: ./Dockerfile
     image: klausb1805/category
     ports:
       - "8890:8082"
     networks:
       local_dev_net:
         aliases:
-          - categoryms
+          - categories
     depends_on:
       - web-shop-db-image
 
   productms:
     build:
       context: ./product/
-      dockerfile: ./docker/DockerfileProduct
+      dockerfile: ./Dockerfile
     image: klausb1805/product
     ports:
       - "8889:8081"
     networks:
       local_dev_net:
         aliases:
-          - productms
+          - products
     depends_on:
       - web-shop-db-image
 
