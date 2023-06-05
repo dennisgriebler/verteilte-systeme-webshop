@@ -40,13 +40,19 @@ CREATE DATABASE products;
 USE products;
 
 CREATE TABLE product (
-                         id INT NOT NULL AUTO_INCREMENT,
-                         details VARCHAR(255),
-                         name VARCHAR(255),
-                         price DOUBLE,
-                         category_id INT,
-                         PRIMARY KEY (id)
+	id INT NOT NULL AUTO_INCREMENT,
+	details VARCHAR(255),
+	name VARCHAR(255),
+	price DOUBLE,
+	category_id INT,
+	PRIMARY KEY (id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE category (
+	category_id INT NOT NULL,
+	PRIMARY Key (category_id)
+) ENGINE=InnoDB;
+
 
 CREATE INDEX FK1mtsbur82frn64de7balymq9s ON product (category_id ASC);
 
@@ -55,8 +61,8 @@ CREATE DATABASE categories;
 USE categories;
 
 CREATE TABLE category (
-                          id INT NOT NULL AUTO_INCREMENT,
-                          name VARCHAR(255) NOT NULL,
-                          PRIMARY KEY (id)
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id)
 ) ENGINE=InnoDB;
 

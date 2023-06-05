@@ -3,38 +3,28 @@ package com.acme.product.model;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
-
-
 /**
  * This class contains details about products.
  */
 @Entity
-@Table(name = "product")
+@Table(name = "product", schema = "products")
 public class Product implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
 	private int id;
 
-	@Column(name = "name")
 	private String name;
 
-	@Column(name = "price")
 	private double price;
 
 	
 	@ManyToOne
-	@JoinColumn(name = "category_externalId")
+	@JoinColumn(name = "category_id", referencedColumnName = "category_id")
 	private Category category;
 
-	@Column(name = "details")
 	private String details;
 
 	public Product() {
