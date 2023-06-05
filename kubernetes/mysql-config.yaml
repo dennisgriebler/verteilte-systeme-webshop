@@ -59,7 +59,7 @@ data:
     
     CREATE TABLE category (
       category_id INT NOT NULL,
-	  PRIMARY Key (category_id)
+      PRIMARY Key (category_id)
     ) ENGINE=InnoDB;
 
 
