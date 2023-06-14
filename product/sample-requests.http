@@ -31,7 +31,7 @@ Content-Type: application/json
   "price" : "999.98",
   "details" : "Details",
   "category" : {
-    "categoryId" : "10"
+    "categoryId" : "1"
   }
 }
 
