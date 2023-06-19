@@ -4,6 +4,7 @@ import hska.iwi.eShopMaster.model.businessLogic.manager.CategoryManager;
 import hska.iwi.eShopMaster.model.businessLogic.manager.ProductManager;
 import hska.iwi.eShopMaster.model.businessLogic.manager.impl.CategoryManagerImpl;
 import hska.iwi.eShopMaster.model.businessLogic.manager.impl.ProductManagerImpl;
+import hska.iwi.eShopMaster.model.businessLogic.manager.impl.ProductManagerImplMS;
 import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
 
@@ -30,7 +31,7 @@ public class AddProductAction extends ActionSupport {
 
 		if(user != null && (user.getRole().getTyp().equals("admin"))) {
 
-			ProductManager productManager = new ProductManagerImpl();
+			ProductManager productManager = new ProductManagerImplMS();
 			int productId = productManager.addProduct(name, Double.parseDouble(price), categoryId,
 					details);
 

@@ -5,11 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 /**
  * This class contains details about categories.
  */
 @Entity
 @Table(name = "category")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Category implements java.io.Serializable {
 
 	/**

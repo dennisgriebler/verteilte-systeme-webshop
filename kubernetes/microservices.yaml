@@ -97,7 +97,7 @@ spec:
         app: webshop
     spec:
       containers:
-      - image: klausb1805/webshop:latest
+      - image: klausb1805/webshop:v1
         name: webshop
         ports:
         - containerPort: 8080

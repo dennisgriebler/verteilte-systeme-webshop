@@ -6,7 +6,7 @@ GET http://localhost:8890/categories
 ###
 # Eine vorhandene Kategorie
 # Erwartung: Status 200
-GET http://localhost:8890/categories/11
+GET http://localhost:8890/categories/1
 
 ###
 # Eine nicht vorhandene Kategorie

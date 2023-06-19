@@ -3,11 +3,14 @@ package hska.iwi.eShopMaster.model.database.dataobjects;
 
 import javax.persistence.*;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 /**
  * This class contains details about products.
  */
 @Entity
 @Table(name = "product")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements java.io.Serializable {
 
 	/**
