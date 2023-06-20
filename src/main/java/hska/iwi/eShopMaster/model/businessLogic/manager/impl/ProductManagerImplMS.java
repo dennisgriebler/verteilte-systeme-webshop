@@ -1,19 +1,12 @@
 package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
-import hska.iwi.eShopMaster.model.businessLogic.manager.CategoryManager;
+import hska.iwi.eShopMaster.model.businessLogic.manager.impl.CategoryManagerImplMS;
 import hska.iwi.eShopMaster.model.businessLogic.manager.ProductManager;
-import hska.iwi.eShopMaster.model.database.dataAccessObjects.ProductDAO;
-import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.dataobjects.Product;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
 
 import java.util.List;
@@ -22,14 +15,9 @@ import java.util.ArrayList;
 
 public class ProductManagerImplMS implements ProductManager {
     private static String url = "http://products.default.svc.cluster.local:8889/";
-	private ProductDAO helper;
 	
-	public ProductManagerImplMS() {
-		helper = new ProductDAO();
-	}
-
 	public List<Product> getProducts() {
-        String input = makeGetRequest(url + "products");
+        String input = RestCalls.makeGetRequest(url + "products");
         if(!input.isEmpty()) {
             return deserializeProducts(input);
         }
@@ -52,8 +40,7 @@ public class ProductManagerImplMS implements ProductManager {
         }
         
         String queryUrl = queryParts.isEmpty() ? url + "products" : url + "products?" + queryParts;
-        System.out.println("Constructed query url: "+queryUrl);
-		String input = makeGetRequest(queryUrl);
+		String input = RestCalls.makeGetRequest(queryUrl);
         if (!input.isEmpty()) {
             return deserializeProducts(input);
         }
@@ -61,7 +48,7 @@ public class ProductManagerImplMS implements ProductManager {
 	}
 
 	public Product getProductById(int id) {
-        String input = makeGetRequest(url + "products/" + Integer.toString(id));
+        String input = RestCalls.makeGetRequest(url + "products/" + Integer.toString(id));
         if(!input.isEmpty()) {
             return deserializeProduct(input);
         }
@@ -70,7 +57,7 @@ public class ProductManagerImplMS implements ProductManager {
 
 	public Product getProductByName(String name) {
         //Warning Deprecated
-		String input = makeGetRequest(url + "products/" + name);
+		String input = RestCalls.makeGetRequest(url + "products/" + name);
         if(!input.isEmpty()) {
             return deserializeProduct(input);
         }
@@ -79,59 +66,35 @@ public class ProductManagerImplMS implements ProductManager {
 	
 	public int addProduct(String name, double price, int categoryId, String details) {
 		int productId = -1;
-		
-		CategoryManager categoryManager = new CategoryManagerImpl();
-		Category category = categoryManager.getCategory(categoryId);
-		
-		if(category != null){
-			Product product;
-			if(details == null){
-				product = new Product(name, price, category);	
-			} else{
-				product = new Product(name, price, category, details);
-			}
-			helper.saveObject(product);
-			productId = product.getId();
-		}
+        try{
+			ObjectMapper mapper = new ObjectMapper();
+            ObjectNode json = mapper.createObjectNode();
+            json.put("name", name);
+            json.put("price", Double.toString(price));
+            if(details != null){
+            json.put("details", details);
+            }
+
+            ObjectNode category = mapper.createObjectNode();
+            category.put("categoryId", categoryId);
+            json.put("category", category);
+            String jsonString = mapper.writeValueAsString(json);
+            String response = RestCalls.makePostRequest(url + "products",jsonString);
+            mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(response);
+            productId = jsonNode.get("id").asInt();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 		return productId;
-	}
+    }
 
 	public void deleteProductById(int id) {
-		helper.deleteById(id);
+		System.out.println(RestCalls.makeDeleteRequest(url + "products/" + Integer.toString(id)));
 	}
 
-	public boolean deleteProductsByCategoryId(int categoryId) {
-		return false;
-	}
-
-    private String makeGetRequest(String urlString) {
-        try {
-            URL url = new URL(urlString);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            int responseCode = connection.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            StringBuilder response = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-
-            System.out.println("Response: " + response.toString());
-
-            connection.disconnect();
-            return response.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-            return "";
+    public boolean deleteProductsByCategoryId(int id) {
+        return false;
     }
 
     private Product deserializeProduct(String json) {
@@ -152,8 +115,12 @@ public class ProductManagerImplMS implements ProductManager {
         JsonNode rootNode = objectMapper.readTree(json);
         String text = rootNode.get("_embedded").get("productList").toString();
         text = text.replaceAll("categoryId", "id");
-        System.out.println(text);
         ArrayList<Product> products = objectMapper.readValue(text, new TypeReference<List<Product>>(){});
+        for(int i = 0; i < products.size();i++) {
+            Product currentProd = products.get(i);
+            int catId = currentProd.getCategory().getId();
+            currentProd.getCategory().setName(new CategoryManagerImplMS().getCategory(catId).getName());
+        }
         return products;
         } catch(Exception e) {
             System.out.println("Error 404");   

@@ -1,7 +1,7 @@
 package hska.iwi.eShopMaster.controller;
 
 import hska.iwi.eShopMaster.model.businessLogic.manager.CategoryManager;
-import hska.iwi.eShopMaster.model.businessLogic.manager.impl.CategoryManagerImpl;
+import hska.iwi.eShopMaster.model.businessLogic.manager.impl.CategoryManagerImplMS;
 import hska.iwi.eShopMaster.model.database.dataobjects.Category;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
 
@@ -32,7 +32,7 @@ public class InitCategorySiteAction extends ActionSupport {
 		boolean isAdmin = true;
 		if(user != null && isAdmin) {
 
-			CategoryManager categoryManager = new CategoryManagerImpl();
+			CategoryManager categoryManager = new CategoryManagerImplMS();
 			this.setCategories(categoryManager.getCategories());
 			
 			if(pageToGoTo != null){

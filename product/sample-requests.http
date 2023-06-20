@@ -27,11 +27,11 @@ POST http://localhost:8889/products
 Content-Type: application/json
 
 {
-  "name" :  "Testprodukt",
+  "name" :  "Testprodukt2",
   "price" : "999.98",
   "details" : "Details",
   "category" : {
-    "categoryId" : "1"
+    "categoryId" : "4"
   }
 }
 

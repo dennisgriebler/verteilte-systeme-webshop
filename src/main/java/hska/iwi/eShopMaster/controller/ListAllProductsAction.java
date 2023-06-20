@@ -1,7 +1,6 @@
 package hska.iwi.eShopMaster.controller;
 
 import hska.iwi.eShopMaster.model.businessLogic.manager.ProductManager;
-import hska.iwi.eShopMaster.model.businessLogic.manager.impl.ProductManagerImpl;
 import hska.iwi.eShopMaster.model.businessLogic.manager.impl.ProductManagerImplMS;
 import hska.iwi.eShopMaster.model.database.dataobjects.Product;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
